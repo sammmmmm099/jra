@@ -16,8 +16,8 @@ async def start_message(c,m):
     if not await db.is_user_exist(m.from_user.id):
         await db.add_user(m.from_user.id, m.from_user.first_name)
         await c.send_message(LOG_CHANNEL, LOG_TEXT.format(m.from_user.id, m.from_user.mention))
-    await m.reply_photo(f"https://te.legra.ph/file/119729ea3cdce4fefb6a1.jpg",
-        caption=f"<b>Hello {m.from_user.mention} 👋\n\nI Am Join Request Acceptor Bot. I Can Accept All Old Pending Join Request.\n\nFor All Pending Join Request Use - /accept</b>",
+    await m.reply_photo(f"https://envs.sh/AR7.jpg",
+        caption=f"<b>Hello {m.from_user.mention} 👋\n\nI Am Join Request Acceptor Bot. I Can Accept All Old Pending Join Request.",
         reply_markup=InlineKeyboardMarkup(
              [
                 [
@@ -82,7 +82,28 @@ async def approve_new(client, m):
             await client.send_message(LOG_CHANNEL, LOG_TEXT.format(m.from_user.id, m.from_user.mention))
         await client.approve_chat_join_request(m.chat.id, m.from_user.id)
         try:
-            await client.send_message(m.from_user.id, "**Hello {}!\nWelcome To {}\n\n__Powered By : @Animes2u __**".format(m.from_user.mention, m.chat.title))
+            # await client.send_message(m.from_user.id, "**Hello {}!\nWelcome To {}\n\n__Powered By : @Animes2u __**".format(m.from_user.mention, m.chat.title))
+             await m.reply_photo(f"https://envs.sh/AR7.jpg",
+        caption=f"<b>Hello {m.from_user.mention} 👋\n\nI Am Join Request Acceptor Bot. I Can Accept All Old Pending Join Request.",
+        reply_markup=InlineKeyboardMarkup(
+             [
+                [
+                    InlineKeyboardButton('- Mᴀɪɴ Cʜᴀɴɴᴇʟ -', url='https://t.me/Animes2u')
+                ],
+                [
+                    InlineKeyboardButton('- Oɴɢᴏɪɴɢ Aɴɪᴍᴇ -', url='https://t.me/Animes3u')
+                ],
+                [
+                   InlineKeyboardButton("◇ ᴘᴀɪᴅ ᴘʀᴏᴍᴏᴛɪᴏɴs ◇", url='https://t.me/Animes2u_Professor_Bot')
+                ],
+                [
+                   InlineKeyboardButton("⚡ ᴀʙᴏᴜᴛ ᴍᴇ", callback_data = "about"),
+                   InlineKeyboardButton("🍁 ᴄʟᴏꜱᴇ", callback_data = "close")
+                ]
+            ]
+        )
+    )
+
         except:
             pass
     except Exception as e:
