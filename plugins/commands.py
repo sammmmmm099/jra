@@ -12,12 +12,13 @@ Nᴀᴍᴇ - {}</b>
 """
 
 @Client.on_message(filters.command('start'))
-async def start_message(c,m):
+async def start_message(c, m):
     if not await db.is_user_exist(m.from_user.id):
         await db.add_user(m.from_user.id, m.from_user.first_name)
         await c.send_message(LOG_CHANNEL, LOG_TEXT.format(m.from_user.id, m.from_user.mention))
+    
     await m.reply_photo(
-        "https://envs.sh/ARa.jpg",
+        "https://envs.sh/A1q.jpg",
         caption=f"<b>Hello {m.from_user.mention} 👋\n\nI Am Join Request Acceptor Bot. I Can Accept All Old Pending Join Requests.</b>",
         reply_markup=InlineKeyboardMarkup(
             [
@@ -93,9 +94,13 @@ async def approve_new(client, m):
                     m.from_user.mention, m.chat.title
                 )
             )
-            
+        except Exception as e:
+            print(f"Error sending DM: {e}")
+
+        # Ensure image & keyboard are sent
+        try:
             await m.reply_photo(
-                "https://envs.sh/ARa.jpg",
+                "https://envs.sh/A1q.jpg",
                 caption=f"<b>Hello {m.from_user.mention} 👋\n\nI Am Join Request Acceptor Bot. I Can Accept All Old Pending Join Requests.</b>",
                 reply_markup=InlineKeyboardMarkup(
                     [
@@ -109,7 +114,8 @@ async def approve_new(client, m):
                     ]
                 )
             )
-        except:
-            pass
+        except Exception as e:
+            print(f"Error sending photo & buttons: {e}")
+
     except Exception as e:
-        print(str(e))
+        print(f"Error in approve_new: {e}")
