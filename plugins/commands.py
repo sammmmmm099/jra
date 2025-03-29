@@ -16,22 +16,17 @@ async def start_message(c,m):
     if not await db.is_user_exist(m.from_user.id):
         await db.add_user(m.from_user.id, m.from_user.first_name)
         await c.send_message(LOG_CHANNEL, LOG_TEXT.format(m.from_user.id, m.from_user.mention))
-    await m.reply_photo(f"https://envs.sh/AR7.jpg",
-        caption=f"<b>Hello {m.from_user.mention} 👋\n\nI Am Join Request Acceptor Bot. I Can Accept All Old Pending Join Request.",
+    await m.reply_photo(
+        "https://envs.sh/ARa.jpg",
+        caption=f"<b>Hello {m.from_user.mention} 👋\n\nI Am Join Request Acceptor Bot. I Can Accept All Old Pending Join Requests.</b>",
         reply_markup=InlineKeyboardMarkup(
-             [
+            [
+                [InlineKeyboardButton('- Mᴀɪɴ Cʜᴀɴɴᴇʟ -', url='https://t.me/Animes2u')],
+                [InlineKeyboardButton('- Oɴɢᴏɪɴɢ Aɴɪᴍᴇ -', url='https://t.me/Animes3u')],
+                [InlineKeyboardButton("◇ ᴘᴀɪᴅ ᴘʀᴏᴍᴏᴛɪᴏɴs ◇", url='https://t.me/Animes2u_Professor_Bot')],
                 [
-                    InlineKeyboardButton('- Mᴀɪɴ Cʜᴀɴɴᴇʟ -', url='https://t.me/Animes2u')
-                ],
-                [
-                    InlineKeyboardButton('- Oɴɢᴏɪɴɢ Aɴɪᴍᴇ -', url='https://t.me/Animes3u')
-                ],
-                [
-                   InlineKeyboardButton("◇ ᴘᴀɪᴅ ᴘʀᴏᴍᴏᴛɪᴏɴs ◇", url='https://t.me/Animes2u_Professor_Bot')
-                ],
-                [
-                   InlineKeyboardButton("⚡ ᴀʙᴏᴜᴛ ᴍᴇ", callback_data = "about"),
-                   InlineKeyboardButton("🍁 ᴄʟᴏꜱᴇ", callback_data = "close")
+                    InlineKeyboardButton("⚡ ᴀʙᴏᴜᴛ ᴍᴇ", callback_data="about"),
+                    InlineKeyboardButton("🍁 ᴄʟᴏꜱᴇ", callback_data="close")
                 ]
             ]
         )
@@ -42,25 +37,33 @@ async def accept(client, message):
     show = await message.reply("**Please Wait.....**")
     user_data = await db.get_session(message.from_user.id)
     if user_data is None:
-        await show.edit("**For Accepte Pending Request You Have To /login First.**")
+        await show.edit("**To Accept Pending Requests, You Need To /login First.**")
         return
     try:
         acc = Client("joinrequest", session_string=user_data, api_hash=API_HASH, api_id=API_ID)
         await acc.connect()
     except:
-        return await show.edit("**Your Login Session Expired. So /logout First Then Login Again By - /login**")
-    show = await show.edit("**Now Forward A Message From Your Channel Or Group With Forward Tag\n\nMake Sure Your Logged In Account Is Admin In That Channel Or Group With Full Rights.**")
+        return await show.edit("**Your Login Session Expired. Please /logout First, Then Login Again With /login**")
+    
+    await show.edit(
+        "**Now Forward A Message From Your Channel Or Group With Forward Tag\n\n"
+        "Make Sure Your Logged-In Account Is Admin In That Channel Or Group With Full Rights.**"
+    )
+    
     vj = await client.listen(message.chat.id)
-    if vj.forward_from_chat and not vj.forward_from_chat.type in [enums.ChatType.PRIVATE, enums.ChatType.BOT]:
+    if vj.forward_from_chat and vj.forward_from_chat.type not in [enums.ChatType.PRIVATE, enums.ChatType.BOT]:
         chat_id = vj.forward_from_chat.id
         try:
             info = await acc.get_chat(chat_id)
         except:
-            await show.edit("**Error - Make Sure Your Logged In Account Is Admin In This Channel Or Group With Rights.**")
+            await show.edit("**Error - Ensure Your Logged-In Account Is Admin In This Channel Or Group With The Necessary Rights.**")
+            return
     else:
-        return await message.reply("**Message Not Forwarded From Channel Or Group.**")
+        return await message.reply("**Message Not Forwarded From A Channel Or Group.**")
+    
     await vj.delete()
     msg = await show.edit("**Accepting all join requests... Please wait until it's completed.**")
+
     try:
         while True:
             await acc.approve_all_chat_join_requests(chat_id)
@@ -74,38 +77,39 @@ async def accept(client, message):
         
 @Client.on_chat_join_request(filters.group | filters.channel)
 async def approve_new(client, m):
-    if NEW_REQ_MODE == False:
+    if not NEW_REQ_MODE:
         return 
     try:
         if not await db.is_user_exist(m.from_user.id):
             await db.add_user(m.from_user.id, m.from_user.first_name)
             await client.send_message(LOG_CHANNEL, LOG_TEXT.format(m.from_user.id, m.from_user.mention))
+        
         await client.approve_chat_join_request(m.chat.id, m.from_user.id)
+        
         try:
-            # await client.send_message(m.from_user.id, "**Hello {}!\nWelcome To {}\n\n__Powered By : @Animes2u __**".format(m.from_user.mention, m.chat.title))
-             await m.reply_photo(f"https://envs.sh/AR7.jpg",
-        caption=f"<b>Hello {m.from_user.mention} 👋\n\nI Am Join Request Acceptor Bot. I Can Accept All Old Pending Join Request.",
-        reply_markup=InlineKeyboardMarkup(
-             [
-                [
-                    InlineKeyboardButton('- Mᴀɪɴ Cʜᴀɴɴᴇʟ -', url='https://t.me/Animes2u')
-                ],
-                [
-                    InlineKeyboardButton('- Oɴɢᴏɪɴɢ Aɴɪᴍᴇ -', url='https://t.me/Animes3u')
-                ],
-                [
-                   InlineKeyboardButton("◇ ᴘᴀɪᴅ ᴘʀᴏᴍᴏᴛɪᴏɴs ◇", url='https://t.me/Animes2u_Professor_Bot')
-                ],
-                [
-                   InlineKeyboardButton("⚡ ᴀʙᴏᴜᴛ ᴍᴇ", callback_data = "about"),
-                   InlineKeyboardButton("🍁 ᴄʟᴏꜱᴇ", callback_data = "close")
-                ]
-            ]
-        )
-    )
-
+            await client.send_message(
+                m.from_user.id, 
+                "**Hello {}!\nWelcome To {}\n\n__Powered By : @Animes2u __**".format(
+                    m.from_user.mention, m.chat.title
+                )
+            )
+            
+            await m.reply_photo(
+                "https://envs.sh/ARa.jpg",
+                caption=f"<b>Hello {m.from_user.mention} 👋\n\nI Am Join Request Acceptor Bot. I Can Accept All Old Pending Join Requests.</b>",
+                reply_markup=InlineKeyboardMarkup(
+                    [
+                        [InlineKeyboardButton('- Mᴀɪɴ Cʜᴀɴɴᴇʟ -', url='https://t.me/Animes2u')],
+                        [InlineKeyboardButton('- Oɴɢᴏɪɴɢ Aɴɪᴍᴇ -', url='https://t.me/Animes3u')],
+                        [InlineKeyboardButton("◇ ᴘᴀɪᴅ ᴘʀᴏᴍᴏᴛɪᴏɴs ◇", url='https://t.me/Animes2u_Professor_Bot')],
+                        [
+                            InlineKeyboardButton("⚡ ᴀʙᴏᴜᴛ ᴍᴇ", callback_data="about"),
+                            InlineKeyboardButton("🍁 ᴄʟᴏꜱᴇ", callback_data="close")
+                        ]
+                    ]
+                )
+            )
         except:
             pass
     except Exception as e:
         print(str(e))
-        pass
